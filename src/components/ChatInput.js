@@ -2,13 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 import SendIcon from '@material-ui/icons/Send';
 
-const ChatInput = () => {
+const ChatInput = ({ isDark }) => {
     return (
         <Container>
             <InputContainer>
                 <form>
-                    <input type='text' placeholder='Message here...' />
-                    <SendButton>
+                    <input style={{ background: isDark ? 'rgb(50, 50, 50)' : 'white' }} type='text' placeholder='Message here...' />
+                    <SendButton isDark={isDark}>
                         <Send />
                     </SendButton>
                 </form>
@@ -49,7 +49,7 @@ const InputContainer = styled.div `
 `
 
 const SendButton = styled.div `
-    background: #007a5a;
+    background: ${({ isDark }) => (isDark ? 'rgb(30,30,30)' : '#007a5a')};
     border-radius: 2px;
     width: 32px;
     height: 32px;
@@ -64,7 +64,7 @@ const SendButton = styled.div `
     }
 
     :hover {
-        background: #148567;
+        background: ${({ isDark }) => (isDark ? 'rgb(70,70,70)' : '#148567')};
     }
 `
 

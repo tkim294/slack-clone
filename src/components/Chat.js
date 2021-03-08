@@ -5,11 +5,11 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import ChatInput from './ChatInput';
 import ChatMessage from './ChatMessage';
 
-const Chat = () => {
+const Chat = ({ isDark }) => {
     return (
         <Container>
-            <Header>
-                <Channel>
+            <Header isDark={isDark}>
+                <Channel isDark={isDark}>
                     <ChannelName>
                         # clever
                     </ChannelName>
@@ -17,17 +17,17 @@ const Chat = () => {
                         Company-wide announcements and work-based matters
                     </ChannelInfo>
                 </Channel>
-                <ChannelDetails>
+                <ChannelDetails isDark={isDark}>
                     <div>
                         Details
                     </div>
                     <Info />
                 </ChannelDetails>
             </Header>
-            <MessageContainer>
+            <MessageContainer isDark={isDark}>
                 <ChatMessage />
             </MessageContainer>
-            <ChatInput />
+            <ChatInput isDark={isDark} />
         </Container>
     )
 }
@@ -44,22 +44,22 @@ const Header = styled.div `
     padding-right: 20px;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid rgba(83, 39, 83, .13);
+    border-bottom: ${({ isDark }) => (isDark ? '1px solid rgb(104, 74, 104)' : '1px solid rgba(83, 39, 83, .13)')};
     justify-content: space-between;
 `
 
 const MessageContainer = styled.div `
-    
+    color: ${({ isDark }) => (isDark ? 'white' : 'black')};
 `
 
 const Channel = styled.div `
-
+    color: ${({ isDark }) => (isDark ? 'white' : 'black')};
 `
 
 const ChannelDetails = styled.div `
     display: flex;
     align-items: center;
-    color: #606060;
+    color: ${({ isDark }) => (isDark ? 'white' : '#606060')};
 `
 
 const ChannelName = styled.div `

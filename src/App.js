@@ -8,8 +8,18 @@ import Sidebar from './components/Sidebar';
 import db from './firebase';
 import { useEffect, useState } from 'react';
 
+import Switch1 from '@material-ui/core/Switch';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+
 function App() {
-  
+
+  const [checked, setChecked] = useState(false);
+
+  const toggleChecked = () => {
+      setChecked(!checked);
+  }
+
   const [rooms, setRooms] = useState([]);
 
   const getChannels = () => {
@@ -33,13 +43,21 @@ function App() {
   return (
     <div className="App">
       <Router>
-        <Container>
-          <Header />
+        <Container isDark={checked}>
+          <HeaderContainer>
+            <Formgroup isDark={checked}>
+              <FormControlLabel
+                  control={<Switch1 checked={checked} color="primary" onClick={toggleChecked} />}
+                  label={checked ? "Dark Mode" : "Normal Mode"}
+              />
+            </Formgroup>
+            <Header isDark={checked} />
+          </HeaderContainer>
           <Main>
-            <Sidebar rooms={rooms} />
+            <Sidebar rooms={rooms} isDark={checked} />
             <Switch>
               <Route path="/room">
-                <Chat />
+                <Chat isDark={checked} />
               </Route>
               <Route path='/'>
                 <Login />
@@ -55,13 +73,26 @@ function App() {
 export default App;
 
 const Container = styled.div`
+  background: ${({ isDark }) => (isDark ? 'rgb(50, 50, 50)' : 'white')};
   width: 100%;
   height: 100vh;
   display: grid;
-  grid-template-rows: 38px auto;
+  grid-template-rows: 40px auto;
 `
 
 const Main = styled.div`
   display: grid;
   grid-template-columns: 260px auto;
 `
+
+const HeaderContainer = styled.div `
+  display: grid;
+  grid-template-columns: 200px auto;  
+  border: ${({ isDark }) => (isDark ? 'solid 1px rgb(255, 255, 255)' : 'solid 1px rgb(104, 74, 104)')};
+`;
+
+const Formgroup = styled(FormGroup)`
+  background: ${({ isDark }) => (isDark ? 'rgb(40, 40, 40)' : '#350d36')};  
+  padding-left: 20px;
+  color: white;
+`;

@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 
-const Header = () => {
+const Header = ({ isDark }) => {
+
     return (
-        <Container>
+        <Container isDark={isDark}>
             <Main>
                 <AccessTimeIcon />
                 <SearchContainer>
@@ -30,14 +31,14 @@ const Header = () => {
 export default Header;
 
 const Container = styled.div`
-    background: #350d36;
+    background: ${({ isDark }) => (isDark ? 'rgb(40, 40, 40)' : '#350d36')}; 
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     z-index: 10;
-    box-shadow: inset 0 0 0 1px rgb(104 74 104);
+    // box-shadow: inset 0 0 0 1px rgb(104, 74, 104);
 `
 
 const Main = styled.div`

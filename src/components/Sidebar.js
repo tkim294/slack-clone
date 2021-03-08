@@ -18,12 +18,12 @@ const Sidebar = (props) => {
 
     return (
         <div>
-            <Container>
+            <Container isDark={props.isDark}>
                 <WorkspaceContainer>
                     <Name>
                         CleverProgrammer
                     </Name>
-                    <NewMessage>
+                    <NewMessage isDark={props.isDark}>
                         <AddCircleOutlineIcon />
                     </NewMessage>
                 </WorkspaceContainer>
@@ -63,7 +63,7 @@ const Sidebar = (props) => {
 export default Sidebar;
 
 const Container = styled.div `
-    background: #3F0E40;
+    background: ${({ isDark }) => (isDark ? 'rgb(40, 40, 40)' : '#350d36')};
     height: 100%;
 `
 
@@ -84,9 +84,9 @@ const Name = styled.div `
 const NewMessage = styled.div `
     width: 36px;
     height: 36px;
-    background: white;
-    color: #3F0E40;
-    fill: #3F0E40;
+    background: ${({ isDark }) => (isDark ? 'rgb(80, 80, 80)' : 'white')};
+    color: ${({ isDark }) => (isDark ? 'gray' : '#3F0E40')};
+    fill: ${({ isDark }) => (isDark ? 'gray' : '#3F0E40')};
     display: flex;
     justify-content: center;
     align-items: center;
