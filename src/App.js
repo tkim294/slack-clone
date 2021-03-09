@@ -7,6 +7,7 @@ import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import db from './firebase';
 import { useEffect, useState } from 'react';
+import {auth, provider} from './firebase';
 
 import Switch1 from '@material-ui/core/Switch';
 import FormGroup from '@material-ui/core/FormGroup';
@@ -16,11 +17,13 @@ function App() {
 
   const [checked, setChecked] = useState(false);
 
+
   const toggleChecked = () => {
       setChecked(!checked);
   }
 
   const [rooms, setRooms] = useState([]);
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
 
   const getChannels = () => {
     db.collection('rooms').onSnapshot((snapshot) => {
@@ -31,40 +34,49 @@ function App() {
         };
       }))
     });
+  }
 
+  const signOut = () => {
+    auth.signOut().then(() => {
+      localStorage.removeItem('user');
+      setUser(null);
+    })
   }
 
   useEffect(() => {
     getChannels();
   }, [])
 
-  console.log(rooms);
-
   return (
     <div className="App">
       <Router>
-        <Container isDark={checked}>
-          <HeaderContainer>
-            <Formgroup isDark={checked}>
-              <FormControlLabel
-                  control={<Switch1 checked={checked} color="primary" onClick={toggleChecked} />}
-                  label={checked ? "Dark Mode" : "Normal Mode"}
-              />
-            </Formgroup>
-            <Header isDark={checked} />
-          </HeaderContainer>
-          <Main>
-            <Sidebar rooms={rooms} isDark={checked} />
-            <Switch>
-              <Route path="/room">
-                <Chat isDark={checked} />
-              </Route>
-              <Route path='/'>
-                <Login />
-              </Route>
-            </Switch>
-          </Main>
-        </Container>
+        {
+          !user ? 
+          <Login setUser={setUser} />
+          :
+          <Container isDark={checked}>
+            <HeaderContainer>
+              <Formgroup isDark={checked}>
+                <FormControlLabel
+                    control={<Switch1 checked={checked} color="primary" onClick={toggleChecked} />}
+                    label={checked ? "Dark Mode" : "Normal Mode"}
+                />
+              </Formgroup>
+              <Header user={user} isDark={checked} signOut={signOut} />
+            </HeaderContainer>
+            <Main>
+              <Sidebar rooms={rooms} isDark={checked} />
+              <Switch>
+                <Route path="/room/:channelId">
+                  <Chat user={user} isDark={checked} />
+                </Route>
+                <Route path="/">
+                  Select or Createe Channel
+                </Route>
+              </Switch>
+            </Main>
+          </Container>
+        }
       </Router>
     </div>
   );
@@ -77,7 +89,7 @@ const Container = styled.div`
   width: 100%;
   height: 100vh;
   display: grid;
-  grid-template-rows: 40px auto;
+  grid-template-rows: 38px minmax(0, 1fr);
 `
 
 const Main = styled.div`

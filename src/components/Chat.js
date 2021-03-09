@@ -1,17 +1,62 @@
 import styled from 'styled-components';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import db from '../firebase';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import ChatInput from './ChatInput';
 import ChatMessage from './ChatMessage';
+import { useParams } from 'react-router';
+import firebase from 'firebase';
 
-const Chat = ({ isDark }) => {
+const Chat = ({ user, isDark }) => {
+
+    let { channelId } = useParams();
+    const [channel, setChannel] = useState();
+    const [messages, setMessages] = useState([]);
+
+    const getMessages = () => {
+        db.collection('rooms')
+        .doc(channelId)
+        .collection('messages')
+        .orderBy('timestamp', 'asc')
+        .onSnapshot((snapshot) => {
+            let messages = snapshot.docs.map((doc) => doc.data());
+            // console.log(messages);
+            setMessages(messages);
+        })
+    }
+
+    const sendMessage = (text) => {
+        if(channelId) {
+            let payload = {
+                text: text,
+                timestamp: firebase.firestore.Timestamp.now(),
+                user: user.name,
+                userImage: user.photo, 
+            }
+            db.collection('rooms').doc(channelId).collection('messages').add(payload);
+        }
+    }
+
+    const getChannel = () => {
+        db.collection('rooms')
+        .doc(channelId)
+        .onSnapshot((snapshot) => {
+            setChannel(snapshot.data());
+        });
+    }
+
+    useEffect(() => {
+        getChannel();
+        getMessages();
+        console.log(messages);
+    }, [channelId]);
+
     return (
         <Container>
             <Header isDark={isDark}>
                 <Channel isDark={isDark}>
                     <ChannelName>
-                        # clever
+                        # {channel && channel.name}
                     </ChannelName>
                     <ChannelInfo>
                         Company-wide announcements and work-based matters
@@ -25,9 +70,20 @@ const Chat = ({ isDark }) => {
                 </ChannelDetails>
             </Header>
             <MessageContainer isDark={isDark}>
-                <ChatMessage />
+                {
+                    messages.length > 0 && 
+                    messages.map((data) => (
+                        <ChatMessage
+                            text={data.text}
+                            name={data.user}
+                            image={data.userImage}
+                            timestamp={data.timestamp}
+                            userLoggedIn={user.name}
+                        />
+                    ))
+                }
             </MessageContainer>
-            <ChatInput isDark={isDark} />
+            <ChatInput sendMessage={sendMessage} isDark={isDark} />
         </Container>
     )
 }
@@ -37,6 +93,7 @@ export default Chat;
 const Container = styled.div `
     display: grid;
     grid-template-rows: 64px auto min-content;
+    min-height: 0;
 `
 
 const Header = styled.div `
@@ -50,6 +107,9 @@ const Header = styled.div `
 
 const MessageContainer = styled.div `
     color: ${({ isDark }) => (isDark ? 'white' : 'black')};
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
 `
 
 const Channel = styled.div `

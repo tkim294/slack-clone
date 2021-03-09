@@ -1,21 +1,22 @@
 import React from 'react'
 import styled from 'styled-components'
 
-const ChatMessage = () => {
+const ChatMessage = ({text, name, image, timestamp, userLoggedIn}) => {
+    
     return (
-        <Container>
+        <Container name={name} userLoggedIn={userLoggedIn}>
             <UserAvatar>
-                <img src="https://randomuser.me/api/portraits/men/32.jpg" />
+                {(userLoggedIn !== name) && <img src={image} />}
             </UserAvatar>
             <MessageContent>
-                <Name>
-                    Tae Kim
+                <Name name={name} userLoggedIn={userLoggedIn}>
+                    {(name === userLoggedIn) ? "Me" : name}
                     <span>
-                        2/23/2021 11:13:55 AM
+                        {new Date(timestamp.toDate()).toUTCString()}
                     </span>
                 </Name>
                 <Text>
-                    Challenge 
+                    {text} 
                 </Text>
             </MessageContent>
         </Container>
@@ -27,6 +28,7 @@ export default ChatMessage
 const Container = styled.div `
     padding: 8px 20px;
     display: flex;
+    justify-content: ${({ userLoggedIn, name }) => ((userLoggedIn == name) ? 'flex-end' : 'flex-start' )};
     align-items: center;
 
     :hover {
@@ -55,6 +57,7 @@ const Name = styled.span `
     font-weight: 900;
     font-size: 15px;
     line-height: 1.4;
+    color: ${({ userLoggedIn, name }) => ((userLoggedIn === name) ? '#87ceeb' : 'black')};
 
     span {
         font-weight: 400;
